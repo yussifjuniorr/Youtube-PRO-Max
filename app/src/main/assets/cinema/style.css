@@ -1,0 +1,445 @@
+/* ===== Cinema Style for YouTube v3 =====
+   Native YouTube is scoped under html.atv. Our own UI (#atv-*) only exists while enabled.
+   Motion uses transform/opacity only so it stays on the compositor (smooth at 60/120 Hz). */
+
+html.atv {
+  color-scheme: dark;
+  --atv-font: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Segoe UI Variable Display", "Segoe UI", "Helvetica Neue", "Noto Sans Arabic", Tahoma, Arial, sans-serif;
+  --atv-sub: rgba(235, 235, 245, 0.64);
+  --atv-glass: rgba(36, 36, 40, 0.48);
+  --atv-glass-strong: rgba(26, 26, 30, 0.62);
+  --atv-stroke: rgba(255, 255, 255, 0.14);
+  --atv-hi: inset 0 1px 0 rgba(255, 255, 255, 0.16);
+  --atv-blur: blur(28px) saturate(180%);
+  --atv-pad: clamp(24px, 4.5vw, 72px);
+  --atv-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --atv-spring: cubic-bezier(0.32, 0.72, 0, 1);
+  --atv-cw: clamp(230px, 18.5vw, 320px);
+  --yt-spec-base-background: #050505;
+  --yt-spec-raised-background: #1c1c1e;
+  --yt-spec-menu-background: #1c1c1e;
+  --yt-spec-general-background-a: #050505;
+  --yt-spec-general-background-b: #050505;
+  --yt-spec-text-primary: #f5f5f7;
+  --yt-spec-text-secondary: rgba(235, 235, 245, 0.64);
+  --yt-spec-10-percent-layer: rgba(255, 255, 255, 0.12);
+  --yt-spec-badge-chip-background: rgba(255, 255, 255, 0.12);
+  background: #050505 !important;
+}
+html.atv body, html.atv ytd-app, html.atv #page-manager, html.atv ytd-browse, html.atv ytd-search,
+html.atv ytd-two-column-browse-results-renderer, html.atv ytd-watch-flexy {
+  background: transparent !important;
+  font-family: var(--atv-font) !important;
+}
+
+/* ---------- remove YouTube's classic chrome ---------- */
+html.atv tp-yt-app-drawer, html.atv ytd-mini-guide-renderer { display: none !important; }
+html.atv ytd-page-manager { margin-left: 0 !important; }
+html.atv:not(.atv-classic) ytd-masthead, html.atv:not(.atv-classic) #masthead-container {
+  position: fixed !important; top: -200px !important; height: 0 !important;
+  opacity: 0 !important; pointer-events: none !important; overflow: hidden !important;
+}
+html.atv:not(.atv-classic) ytd-app { --ytd-masthead-height: 0px !important; }
+html.atv:not(.atv-classic) ytd-page-manager { margin-top: 0 !important; padding-top: 80px; }
+html.atv.atv-classic ytd-masthead, html.atv.atv-classic #masthead-container { background: #050505 !important; border: 0 !important; }
+html.atv.atv-classic #atv-nav { display: none; }
+/* YouTube's sticky chip/header bars were bleeding through the home overlay */
+html.atv.atv-home #frosted-glass, html.atv.atv-home ytd-feed-filter-chip-bar-renderer,
+html.atv.atv-home ytd-browse #header { visibility: hidden !important; }
+html.atv.atv-home { scrollbar-width: none; }
+html.atv.atv-home::-webkit-scrollbar { display: none; }
+
+/* ---------- shared glass ---------- */
+#atv-nav, .atv-ctl, .atv-nowcard, .atv-dots, .atv-btn-ghost, .atv-arrow, #atv-side, html.atv-watch ytd-watch-flexy #below {
+  background: var(--atv-glass);
+  border: 1px solid var(--atv-stroke);
+  box-shadow: var(--atv-hi), 0 10px 40px rgba(0, 0, 0, 0.35);
+  backdrop-filter: var(--atv-blur);
+}
+
+/* ---------- top pill navigation ---------- */
+#atv-nav {
+  position: fixed; top: 14px; left: 50%; z-index: 2100;
+  display: flex; align-items: center; gap: 2px; padding: 5px; border-radius: 999px;
+  font: 600 15px/1 var(--atv-font, system-ui, sans-serif); color: #fff;
+  transform: translate3d(-50%, 0, 0);
+  transition: background-color 0.3s var(--atv-ease);
+}
+html.atv-watch #atv-nav { display: none; }
+#atv-nav a, #atv-nav button {
+  color: #fff; text-decoration: none; padding: 11px 18px; border-radius: 999px; border: 0;
+  background: transparent; cursor: pointer; font: inherit; white-space: nowrap;
+  transition: background-color 0.2s var(--atv-ease), color 0.2s var(--atv-ease), transform 0.2s var(--atv-ease);
+}
+#atv-nav a:hover, #atv-nav button:hover { background: rgba(255, 255, 255, 0.14); }
+#atv-nav a:active, #atv-nav button:active { transform: scale(0.96); }
+#atv-nav a.on { background: rgba(255, 255, 255, 0.92); color: #000; }
+#atv-nav .atv-logo { display: grid; place-items: center; padding: 8px 16px; }
+#atv-nav .atv-logo.on { background: rgba(255, 255, 255, 0.16); }
+#atv-nav .atv-nav-search { display: grid; place-items: center; padding: 10px 14px; }
+#atv-nav input {
+  display: none; width: min(380px, 56vw); padding: 10px 16px; border: 0; outline: 0; border-radius: 999px;
+  background: rgba(255, 255, 255, 0.1); color: #fff; font: 500 15px var(--atv-font, system-ui, sans-serif);
+}
+#atv-nav.searching a:not(.atv-logo) { display: none; }
+#atv-nav.searching { min-width: min(620px, 92vw); }
+#atv-nav.searching input { flex: 1; width: auto; }
+#atv-nav.searching input { display: block; }
+
+/* ---------- HOME overlay ---------- */
+#atv-home {
+  position: fixed; inset: 0; z-index: 2000; overflow-x: hidden; overflow-y: auto;
+  background: #050505; color: #fff; font-family: var(--atv-font, system-ui, sans-serif);
+  overscroll-behavior: contain; scrollbar-width: none;
+}
+#atv-home::-webkit-scrollbar { display: none; }
+html.atv.atv-classic #atv-home { top: 56px; }
+html:not(.atv-home) #atv-home { visibility: hidden; pointer-events: none; }
+
+.atv-loading { height: 100vh; display: flex; flex-direction: column; gap: 16px; align-items: center; justify-content: center; color: var(--atv-sub); font-size: 15px; }
+.atv-loading.small { height: 240px; }
+.atv-loading::before {
+  content: ""; width: 32px; height: 32px; border-radius: 50%;
+  border: 3px solid rgba(255, 255, 255, 0.18); border-top-color: #fff; animation: atv-spin 0.8s linear infinite;
+}
+@keyframes atv-spin { to { transform: rotate(360deg); } }
+
+/* full-screen hero */
+.atv-hero { position: relative; height: 100vh; height: 100dvh; min-height: 560px; overflow: hidden; contain: paint; }
+.atv-slide { position: absolute; inset: 0; opacity: 0; transition: opacity 1s var(--atv-ease); pointer-events: none; }
+.atv-slide.on { opacity: 1; pointer-events: auto; }
+.atv-slide-img {
+  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 25%;
+  transform: scale(1.06); will-change: transform; transition: transform 9s linear;
+}
+.atv-slide.on .atv-slide-img { transform: scale(1); }
+.atv-slide::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background:
+    linear-gradient(90deg, rgba(5, 5, 5, 0.85) 0%, rgba(5, 5, 5, 0.45) 38%, rgba(5, 5, 5, 0) 70%),
+    linear-gradient(0deg, #050505 0%, rgba(5, 5, 5, 0.6) 18%, rgba(5, 5, 5, 0) 45%),
+    linear-gradient(180deg, rgba(5, 5, 5, 0.5), rgba(5, 5, 5, 0) 20%);
+}
+.atv-slide-body {
+  position: absolute; z-index: 2; left: var(--atv-pad); bottom: clamp(72px, 12vh, 140px); width: min(640px, 50vw);
+  transform: translate3d(0, 18px, 0); opacity: 0;
+  transition: transform 0.9s var(--atv-ease) 0.15s, opacity 0.9s var(--atv-ease) 0.15s;
+}
+.atv-slide.on .atv-slide-body { transform: none; opacity: 1; }
+.atv-hero-ch { display: inline-flex; align-items: center; gap: 12px; margin-bottom: 18px; color: #fff; text-decoration: none; font: 600 16px var(--atv-font); }
+.atv-av { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; flex: none; box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.22); }
+.atv-av-fb { display: grid; place-items: center; background: rgba(255, 255, 255, 0.18); font: 700 17px var(--atv-font); color: #fff; }
+.atv-h1 {
+  margin: 0 0 14px; font: 700 clamp(32px, 4.2vw, 64px)/1.08 var(--atv-font); letter-spacing: -0.025em; color: #fff;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; text-wrap: balance;
+  padding-bottom: 4px;
+}
+.atv-meta { display: flex; align-items: center; gap: 12px; font-size: 15px; font-weight: 500; color: var(--atv-sub); margin-bottom: 26px; }
+.atv-tag { border: 1px solid rgba(255, 255, 255, 0.4); border-radius: 6px; padding: 2px 7px; font-size: 12px; font-weight: 600; color: #fff; }
+.atv-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+.atv-btn {
+  display: inline-flex; align-items: center; gap: 8px; padding: 14px 28px; border-radius: 999px;
+  font: 600 16px/1 var(--atv-font); text-decoration: none; cursor: pointer; white-space: nowrap;
+  transition: transform 0.25s var(--atv-ease), background-color 0.25s var(--atv-ease);
+}
+.atv-btn:hover { transform: scale(1.04); }
+.atv-btn:active { transform: scale(0.97); }
+.atv-btn-main { background: #f5f5f7; color: #000; }
+.atv-btn-ghost { color: #fff; }
+.atv-btn-ghost:hover { background: rgba(255, 255, 255, 0.22); }
+.atv-dots {
+  position: absolute; z-index: 3; right: var(--atv-pad); bottom: clamp(72px, 12vh, 140px);
+  display: flex; gap: 7px; padding: 9px 12px; border-radius: 999px;
+}
+.atv-dot { width: 7px; height: 7px; padding: 0; border: 0; border-radius: 7px; background: rgba(255, 255, 255, 0.35); cursor: pointer; transition: transform 0.35s var(--atv-ease), background-color 0.35s; }
+.atv-dot.on { background: #fff; transform: scaleX(2.6); margin-inline: 6px; }
+
+/* ---------- shelves + cards ---------- */
+.atv-rows { position: relative; z-index: 4; padding: 8px 0 64px; margin-top: -24px; }
+.atv-row { position: relative; margin: 0 0 6px; content-visibility: auto; contain-intrinsic-size: auto 340px; }
+.atv-row h2 { margin: 0 0 0 var(--atv-pad); font: 700 21px/1.2 var(--atv-font, system-ui); letter-spacing: -0.01em; color: #fff; }
+.atv-trackwrap { position: relative; }
+.atv-track {
+  display: flex; gap: 16px; overflow-x: auto; overflow-y: hidden;
+  padding: 14px var(--atv-pad) 22px; scrollbar-width: none; scroll-snap-type: x proximity; scroll-padding-inline: var(--atv-pad);
+  overscroll-behavior-x: contain;
+}
+.atv-track::-webkit-scrollbar { display: none; }
+.atv-card { flex: 0 0 var(--atv-cw); display: block; color: #fff; text-decoration: none; scroll-snap-align: start; outline: none; }
+.atv-poster {
+  position: relative; aspect-ratio: 16 / 9; border-radius: 14px; background: #1c1c1e;
+  transform: translateZ(0); transition: transform 0.35s var(--atv-ease);
+}
+.atv-poster img { width: 100%; height: 100%; object-fit: cover; display: block; border-radius: inherit; }
+.atv-poster::after {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1); z-index: 3;
+}
+.atv-poster::before {
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; z-index: 3;
+  box-shadow: inset 0 0 0 2px rgba(255, 255, 255, 0.9);
+  opacity: 0; transition: opacity 0.3s var(--atv-ease);
+}
+.atv-card:hover .atv-poster, .atv-card:focus-visible .atv-poster { transform: scale(1.06); }
+.atv-card:hover .atv-poster::before, .atv-card:focus-visible .atv-poster::before, .atv-li:hover .atv-poster::before { opacity: 1; }
+.atv-title {
+  margin-top: 12px; font: 600 14px/1.3 var(--atv-font, system-ui); color: #fff;
+  display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden;
+}
+.atv-sub { margin-top: 3px; font-size: 13px; color: var(--atv-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.atv-dur {
+  position: absolute; z-index: 2; right: 8px; bottom: 8px; padding: 2px 7px; border-radius: 7px;
+  background: rgba(0, 0, 0, 0.72); font: 600 12px var(--atv-font, system-ui); color: #fff;
+}
+.atv-dur.up { bottom: 18px; }
+.atv-prog { position: absolute; z-index: 2; left: 10px; right: 10px; bottom: 8px; height: 4px; border-radius: 4px; background: rgba(255, 255, 255, 0.3); overflow: hidden; }
+.atv-prog i { display: block; height: 100%; background: #fff; transform-origin: left; }
+.atv-arrow {
+  position: absolute; z-index: 5; top: calc(14px + var(--atv-cw) * 9 / 32 - 22px); width: 44px; height: 44px; display: grid; place-items: center;
+  border-radius: 50%; color: #fff; cursor: pointer; opacity: 0; transition: opacity 0.25s var(--atv-ease), transform 0.25s var(--atv-ease);
+}
+.atv-arrow:active { transform: scale(0.92); }
+.atv-arrow.l { left: 12px; }
+.atv-arrow.r { right: 12px; }
+.atv-row:hover .atv-arrow { opacity: 1; }
+
+/* ---------- WATCH: full-screen TV player ---------- */
+html.atv-watch, html.atv-watch body { overflow: hidden !important; }
+html.atv-watch #cinematics, html.atv-watch #cinematics-container,
+html.atv-watch .ytp-chrome-top, html.atv-watch .ytp-gradient-top { display: none !important; }
+html.atv-watch .atv-stage {
+  position: fixed !important; inset: 0 !important; z-index: 1500 !important;
+  width: 100vw !important; height: 100vh !important; max-width: none !important; max-height: none !important;
+  margin: 0 !important; padding: 0 !important; background: #000 !important; border-radius: 0 !important;
+}
+html.atv-watch .atv-stage #player-container-inner { padding-top: 0 !important; height: 100% !important; }
+html.atv-watch .atv-stage #player-container,
+html.atv-watch .atv-stage #player-full-bleed-container,
+html.atv-watch .atv-stage ytd-player,
+html.atv-watch .atv-stage #ytd-player,
+html.atv-watch .atv-stage #container.ytd-player,
+html.atv-watch .atv-stage #movie_player {
+  position: absolute !important; inset: 0 !important; width: 100% !important; height: 100% !important;
+  max-height: none !important; min-height: 0 !important; border-radius: 0 !important;
+}
+html.atv-watch .atv-stage .html5-video-container { width: 100% !important; height: 100% !important; }
+html.atv-watch .atv-stage video.html5-main-video {
+  width: 100% !important; height: 100% !important; left: 0 !important; top: 0 !important; object-fit: contain !important;
+}
+/* everything else stays in the DOM (we read it) but is out of sight */
+html.atv-watch ytd-watch-flexy #secondary {
+  position: absolute !important; left: -9999px !important; width: 1px !important; height: 1px !important;
+  overflow: hidden !important; opacity: 0 !important; pointer-events: none !important;
+}
+
+/* the native details + comments column becomes a glass drawer */
+html.atv-watch ytd-watch-flexy #below {
+  position: fixed !important; top: 12px !important; right: 12px !important; bottom: 12px !important; left: auto !important;
+  width: min(480px, calc(100vw - 24px)) !important; max-width: none !important; margin: 0 !important;
+  z-index: 2050; overflow-y: auto !important; overscroll-behavior: contain;
+  padding: 76px 22px 32px !important; border-radius: 26px;
+  background: var(--atv-glass-strong) !important;
+  transform: translate3d(calc(100% + 24px), 0, 0); visibility: hidden;
+  transition: transform 0.5s var(--atv-spring), visibility 0s linear 0.5s;
+  scrollbar-width: thin;
+}
+html.atv-panel-info ytd-watch-flexy #below, html.atv-panel-comments ytd-watch-flexy #below {
+  transform: none; visibility: visible; transition: transform 0.5s var(--atv-spring), visibility 0s;
+}
+html.atv-watch ytd-watch-metadata { margin-top: 0 !important; }
+html.atv-watch ytd-watch-metadata #top-row { flex-direction: column; align-items: stretch; gap: 14px; }
+html.atv-watch ytd-watch-metadata #actions { justify-content: flex-start !important; min-width: 0 !important; }
+html.atv-watch ytd-watch-metadata h1 { font-size: 22px !important; line-height: 1.25 !important; font-weight: 700 !important; }
+html.atv-watch ytd-watch-metadata h1 yt-formatted-string { font-size: inherit !important; line-height: inherit !important; }
+html.atv-watch ytd-watch-metadata #description {
+  background: rgba(255, 255, 255, 0.07) !important; border-radius: 18px !important;
+}
+html.atv-watch #below ytd-merch-shelf-renderer, html.atv-watch #below #ticket-shelf { display: none !important; }
+
+#atv-scrim {
+  position: fixed; inset: 0; z-index: 2040; background: rgba(0, 0, 0, 0.35);
+  opacity: 0; pointer-events: none; transition: opacity 0.4s var(--atv-ease);
+}
+html.atv-watch.atv-panel #atv-scrim { opacity: 1; pointer-events: auto; }
+html:not(.atv-watch) #atv-scrim, html:not(.atv-watch) #atv-side, html:not(.atv-watch) #atv-ui { display: none; }
+
+/* our up-next drawer */
+#atv-side {
+  position: fixed; top: 12px; right: 12px; bottom: 12px; z-index: 2050;
+  width: min(440px, calc(100vw - 24px)); border-radius: 26px; overflow: hidden;
+  background: var(--atv-glass-strong);
+  font-family: var(--atv-font); color: #fff;
+  transform: translate3d(calc(100% + 24px), 0, 0); visibility: hidden;
+  transition: transform 0.5s var(--atv-spring), visibility 0s linear 0.5s;
+}
+html.atv-panel-next #atv-side { transform: none; visibility: visible; transition: transform 0.5s var(--atv-spring), visibility 0s; }
+.atv-side-body { height: 100%; overflow-y: auto; overscroll-behavior: contain; padding: 76px 16px 24px; scrollbar-width: thin; }
+.atv-sec + .atv-sec { margin-top: 22px; }
+.atv-sec h2 { margin: 0 6px 10px; font: 700 19px/1.2 var(--atv-font); }
+.atv-ephead { display: flex; align-items: baseline; gap: 10px; margin: 0 6px 10px; }
+.atv-ephead h2 { margin: 0; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.atv-count { font-size: 13px; color: var(--atv-sub); flex: none; }
+.atv-list { display: flex; flex-direction: column; gap: 4px; }
+.atv-li {
+  display: grid; grid-template-columns: 160px 1fr; gap: 12px; align-items: start; padding: 6px;
+  border-radius: 16px; color: #fff; text-decoration: none; transition: background-color 0.2s var(--atv-ease);
+}
+.atv-li:hover { background: rgba(255, 255, 255, 0.08); }
+.atv-li .atv-poster { border-radius: 10px; }
+.atv-li .atv-title { margin-top: 0; font-size: 14px; }
+.atv-li-text { min-width: 0; }
+.atv-epnum { font-size: 12px; font-weight: 600; color: var(--atv-sub); margin-bottom: 2px; }
+.atv-ep.now { background: rgba(255, 255, 255, 0.12); }
+.atv-nowtag {
+  position: absolute; z-index: 2; left: 6px; top: 6px; padding: 3px 8px; border-radius: 999px;
+  background: #fff; color: #000; font: 700 10px var(--atv-font, system-ui);
+}
+
+/* floating TV controls */
+#atv-ui {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 2100;
+  display: flex; justify-content: space-between; align-items: flex-start; gap: 16px;
+  padding: 22px 24px 60px; font-family: var(--atv-font); color: #fff; pointer-events: none;
+  background: linear-gradient(180deg, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0));
+  opacity: 0; transform: translate3d(0, -12px, 0);
+  transition: opacity 0.35s var(--atv-ease), transform 0.45s var(--atv-ease);
+}
+html.atv-awake #atv-ui, html.atv-panel #atv-ui { opacity: 1; transform: none; }
+html.atv-awake #atv-ui > *, html.atv-panel #atv-ui > * { pointer-events: auto; }
+html.atv-panel #atv-ui { background: none; }
+html.atv-watch:not(.atv-awake):not(.atv-panel) { cursor: none; }
+.atv-ui-left, .atv-ui-right { display: flex; align-items: center; gap: 10px; min-width: 0; }
+.atv-ctl {
+  display: inline-flex; align-items: center; gap: 8px; height: 46px; padding: 0 18px; border-radius: 999px;
+  color: #fff; font: 600 14px var(--atv-font); cursor: pointer; white-space: nowrap;
+  transition: transform 0.25s var(--atv-ease), background-color 0.25s var(--atv-ease), color 0.25s;
+}
+.atv-ctl:hover { background: rgba(255, 255, 255, 0.2); transform: scale(1.04); }
+.atv-ctl:active { transform: scale(0.96); }
+.atv-ctl.on { background: rgba(255, 255, 255, 0.92); color: #000; }
+.atv-ctl em { font-style: normal; font-weight: 500; opacity: 0.7; }
+.atv-ctl em:empty { display: none; }
+.atv-round { width: 46px; padding: 0; justify-content: center; }
+.atv-nowcard {
+  display: flex; align-items: center; gap: 12px; height: 54px; padding: 0 20px 0 7px; border-radius: 999px;
+  color: #fff; text-decoration: none; min-width: 0; max-width: min(560px, 46vw);
+  transition: transform 0.25s var(--atv-ease), background-color 0.25s;
+}
+.atv-nowcard:hover { background: rgba(255, 255, 255, 0.18); }
+.atv-av-slot { display: contents; }
+.atv-nowtext { display: flex; flex-direction: column; min-width: 0; }
+.atv-nowtext b { font-size: 15px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.atv-nowtext small { font-size: 12px; color: var(--atv-sub); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+html.atv .ytp-play-progress, html.atv .ytp-swatch-background-color,
+html.atv #progress.ytd-thumbnail-overlay-resume-playback-renderer { background: #fff !important; }
+
+/* ---------- pages we restyle but don't rebuild ---------- */
+html.atv ytd-thumbnail, html.atv ytd-thumbnail a#thumbnail, html.atv ytd-thumbnail .yt-core-image,
+html.atv yt-thumbnail-view-model, html.atv .ytThumbnailViewModelImage { border-radius: 14px !important; }
+html.atv ytd-rich-item-renderer ytd-rich-grid-media, html.atv ytd-rich-item-renderer yt-lockup-view-model,
+html.atv ytd-video-renderer ytd-thumbnail { transition: transform 0.3s var(--atv-ease); transform-origin: center 40%; }
+html.atv ytd-rich-item-renderer:hover ytd-rich-grid-media, html.atv ytd-rich-item-renderer:hover yt-lockup-view-model,
+html.atv ytd-video-renderer:hover ytd-thumbnail { transform: scale(1.03); }
+html.atv #video-title, html.atv .yt-lockup-metadata-view-model__title { font-weight: 600 !important; color: #fff !important; }
+html.atv ytd-channel-name, html.atv #metadata-line, html.atv .yt-content-metadata-view-model__metadata-text { color: var(--atv-sub) !important; }
+html.atv ytd-feed-filter-chip-bar-renderer, html.atv #chips-wrapper { background: transparent !important; border: 0 !important; }
+html.atv yt-chip-cloud-chip-renderer, html.atv chip-shape .yt-spec-button-shape-next {
+  background: rgba(255, 255, 255, 0.1) !important; color: #fff !important; border-radius: 999px !important;
+}
+html.atv yt-chip-cloud-chip-renderer[selected], html.atv chip-shape .ytChipShapeActive { background: #fff !important; color: #000 !important; }
+html.atv ytd-popup-container tp-yt-paper-dialog, html.atv ytd-menu-popup-renderer, html.atv ytd-multi-page-menu-renderer {
+  background: rgba(36, 36, 40, 0.82) !important; backdrop-filter: blur(40px) saturate(180%);
+  border: 1px solid var(--atv-stroke); border-radius: 20px !important;
+}
+html.atv ytd-popup-container { z-index: 2200 !important; }
+html.atv ::-webkit-scrollbar { width: 8px; }
+html.atv ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.2); border-radius: 8px; }
+html.atv ::-webkit-scrollbar-track { background: transparent; }
+
+@media (max-width: 900px) {
+  #atv-nav a { padding: 10px 12px; font-size: 13px; }
+  .atv-slide-body { width: calc(100% - 2 * var(--atv-pad)); }
+  .atv-dots { left: 50%; right: auto; bottom: 24px; transform: translateX(-50%); }
+  .atv-ctl span { display: none; }
+  .atv-ctl { width: 46px; padding: 0; justify-content: center; }
+  .atv-nowcard { max-width: 40vw; }
+}
+@media (prefers-reduced-motion: reduce) {
+  #atv-home *, #atv-side *, #atv-nav *, #atv-ui, #atv-ui *, #atv-side, html.atv-watch ytd-watch-flexy #below { transition: none !important; animation: none !important; }
+}
+@media (prefers-reduced-transparency: reduce) {
+  #atv-nav, .atv-ctl, .atv-nowcard, #atv-side, html.atv-watch ytd-watch-flexy #below { background: #1c1c1e !important; backdrop-filter: none !important; }
+}
+
+/* ---------- account button + menu ---------- */
+#atv-nav .atv-acct { padding: 3px; margin-left: 4px; display: grid; place-items: center; }
+.atv-acct-img { width: 36px; height: 36px; border-radius: 50%; overflow: hidden; display: block; background: rgba(255, 255, 255, 0.18); }
+.atv-acct-img img { width: 100%; height: 100%; object-fit: cover; display: block; }
+#atv-nav.menu .atv-acct { background: rgba(255, 255, 255, 0.18); }
+#atv-menu, #atv-suggest {
+  position: absolute; top: calc(100% + 10px); z-index: 1;
+  background: rgba(30, 30, 34, 0.72); border: 1px solid var(--atv-stroke); border-radius: 22px;
+  box-shadow: var(--atv-hi), 0 24px 60px rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(40px) saturate(180%);
+  opacity: 0; transform: translate3d(0, -8px, 0) scale(0.98); pointer-events: none;
+  transition: opacity 0.22s var(--atv-ease), transform 0.3s var(--atv-ease);
+}
+#atv-menu { right: 0; width: 240px; padding: 8px; display: flex; flex-direction: column; transform-origin: top right; }
+#atv-nav.menu #atv-menu { opacity: 1; transform: none; pointer-events: auto; }
+#atv-menu a { padding: 12px 14px !important; border-radius: 14px !important; font-size: 14px; font-weight: 500; }
+#atv-menu a.warn { color: #ff6b6b; }
+/* ---------- search suggestions ---------- */
+#atv-suggest { left: 0; right: 0; padding: 8px; max-height: min(520px, 70vh); overflow-y: auto; }
+#atv-nav.searching #atv-suggest:not(:empty) { opacity: 1; transform: none; pointer-events: auto; }
+.atv-sg {
+  width: 100%; display: flex !important; align-items: center; gap: 14px; text-align: start;
+  padding: 11px 14px !important; border-radius: 14px !important; font-size: 15px !important; font-weight: 500 !important;
+}
+.atv-sg svg { flex: none; opacity: 0.6; }
+.atv-sg span { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+.atv-sg small { font-size: 12px; color: var(--atv-sub); font-weight: 500; }
+.atv-sg.on, .atv-sg:hover { background: rgba(255, 255, 255, 0.14) !important; }
+.atv-sg-av { width: 30px; height: 30px; border-radius: 50%; object-fit: cover; flex: none; font-size: 13px; }
+.atv-sg-head { display: flex; justify-content: space-between; align-items: center; padding: 6px 14px 4px; font-size: 12px; color: var(--atv-sub); font-weight: 600; }
+#atv-nav .atv-sg-clear { padding: 4px 10px; font-size: 12px; color: var(--atv-sub); }
+/* ---------- hover preview ---------- */
+.atv-poster { overflow: hidden; }
+.atv-preview {
+  position: absolute; inset: 0; width: 100%; height: 100%; border: 0; z-index: 1; border-radius: inherit;
+  pointer-events: none; opacity: 0; transition: opacity 0.4s var(--atv-ease);
+}
+.atv-card.previewing .atv-preview { opacity: 1; }
+.atv-card.previewing .atv-dur, .atv-card.previewing .atv-prog { opacity: 0; transition: opacity 0.3s; }
+
+/* ---------- speed: YouTube's own home grid sits under our overlay, so stop it loading images/previews ---------- */
+html.atv.atv-home ytd-browse[page-subtype="home"] ytd-rich-item-renderer :is(img, yt-image, ytd-thumbnail video, #mouseover-overlay, ytd-moving-thumbnail-renderer),
+html.atv.atv-home ytd-browse[page-subtype="home"] ytd-rich-section-renderer,
+html.atv.atv-home #video-preview, html.atv.atv-watch ytd-watch-flexy #secondary img { display: none !important; }
+#atv-home .atv-track { contain: layout paint; }
+.atv-card:focus-visible { outline: none; }
+
+/* ---------- up next card ---------- */
+#atv-next {
+  position: fixed; right: 24px; bottom: 96px; z-index: 2090; width: 380px; display: flex; gap: 14px; padding: 12px;
+  border-radius: 22px; overflow: hidden; color: #fff; font-family: var(--atv-font);
+  background: rgba(30, 30, 34, 0.62); border: 1px solid var(--atv-stroke);
+  box-shadow: var(--atv-hi), 0 24px 60px rgba(0, 0, 0, 0.5); backdrop-filter: blur(30px) saturate(180%);
+  opacity: 0; transform: translate3d(0, 16px, 0) scale(0.98); pointer-events: none;
+  transition: opacity 0.3s var(--atv-ease), transform 0.45s var(--atv-ease);
+}
+#atv-next.on { opacity: 1; transform: none; pointer-events: auto; }
+html:not(.atv-watch) #atv-next { display: none; }
+.atv-next-img { width: 132px; aspect-ratio: 16 / 9; object-fit: cover; border-radius: 12px; flex: none; }
+.atv-next-body { min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+.atv-next-in { font-size: 12px; color: var(--atv-sub); font-weight: 600; }
+.atv-next-title { font-size: 14px; font-weight: 600; line-height: 1.3; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.atv-next-actions { display: flex; gap: 8px; margin-top: auto; }
+.atv-next-actions button {
+  display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 999px; border: 0; cursor: pointer;
+  font: 600 13px var(--atv-font); transition: transform 0.2s var(--atv-ease);
+}
+.atv-next-actions button:active { transform: scale(0.96); }
+.atv-next-play { background: #f5f5f7; color: #000; }
+.atv-next-x { background: rgba(255, 255, 255, 0.14); color: #fff; }
+.atv-next-bar { position: absolute; left: 0; bottom: 0; height: 3px; width: 100%; background: #fff; transform-origin: left; transform: scaleX(0); transition: transform 0.25s linear; }
+@media (prefers-reduced-motion: reduce) { #atv-next, .atv-next-bar { transition: none !important; } }

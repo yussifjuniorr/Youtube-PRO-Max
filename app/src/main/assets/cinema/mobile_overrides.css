@@ -1,0 +1,178 @@
+/* ===== Mobile Responsive Overrides for Android APK ===== */
+
+html.atv, html.atv body {
+  -webkit-tap-highlight-color: transparent;
+  overscroll-behavior: none;
+}
+
+#atv-nav .atv-acct.atv-signed-out .atv-acct-img {
+  position: relative;
+  background: rgba(255, 255, 255, 0.92);
+}
+#atv-nav .atv-acct.atv-signed-out .atv-acct-img::after {
+  content: "+";
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #000;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.atv-signin-item {
+  color: #7ab8ff !important;
+  font-weight: 600 !important;
+}
+
+.atv-guest-card {
+  margin-top: 24px;
+  padding: 24px 20px;
+  max-width: 340px;
+  text-align: center;
+  border-radius: 22px;
+  background: rgba(30, 30, 34, 0.78);
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+.atv-guest-card h2 {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  color: #fff;
+}
+.atv-guest-card p {
+  margin: 0;
+  font-size: 13.5px;
+  line-height: 1.5;
+  color: rgba(235, 235, 245, 0.72);
+}
+.atv-guest-card .atv-btn {
+  margin-top: 6px;
+  text-decoration: none;
+}
+
+@media (hover: none) and (pointer: coarse) {
+  .atv-arrow {
+    display: none !important;
+  }
+  .atv-track {
+    -webkit-overflow-scrolling: touch;
+    scroll-snap-type: x proximity;
+  }
+  .atv-card {
+    scroll-snap-align: start;
+  }
+}
+
+@media (max-width: 640px) {
+  html.atv {
+    --atv-pad: 16px;
+    --atv-cw: clamp(210px, 70vw, 280px);
+  }
+
+  #atv-nav {
+    top: 10px;
+    max-width: calc(100vw - 14px);
+    padding: 4px;
+    gap: 1px;
+    font-size: 12.5px;
+  }
+  #atv-nav a, #atv-nav button {
+    padding: 9px 9px;
+    font-size: 12px;
+  }
+  #atv-nav .atv-logo {
+    padding: 6px 8px;
+  }
+  #atv-nav .atv-logo svg {
+    width: 28px;
+    height: 20px;
+  }
+  #atv-nav .atv-nav-search {
+    padding: 8px 9px;
+  }
+  #atv-nav .atv-acct {
+    padding: 2px;
+    margin-left: 2px;
+  }
+  .atv-acct-img {
+    width: 30px;
+    height: 30px;
+  }
+  #atv-nav.searching {
+    min-width: calc(100vw - 20px);
+    width: calc(100vw - 20px);
+  }
+  #atv-nav.searching input {
+    font-size: 14px;
+    padding: 8px 12px;
+  }
+
+  .atv-hero {
+    height: 78dvh;
+    min-height: 460px;
+  }
+  .atv-slide-body {
+    left: var(--atv-pad);
+    right: var(--atv-pad);
+    width: auto;
+    bottom: 58px;
+  }
+  .atv-hero-ch {
+    margin-bottom: 10px;
+    font-size: 14px;
+  }
+  .atv-av {
+    width: 32px;
+    height: 32px;
+  }
+  .atv-h1 {
+    font-size: clamp(24px, 7.2vw, 34px);
+    margin-bottom: 10px;
+  }
+  .atv-meta {
+    font-size: 13px;
+    margin-bottom: 16px;
+  }
+  .atv-btn {
+    padding: 11px 20px;
+    font-size: 14px;
+  }
+  .atv-dots {
+    bottom: 16px;
+  }
+
+  .atv-row-h {
+    font-size: 19px;
+  }
+
+  #atv-ui {
+    padding: 12px 12px 24px;
+  }
+  .atv-nowcard {
+    max-width: 44vw;
+    padding: 5px 10px 5px 6px;
+  }
+  .atv-ctl {
+    height: 40px;
+    width: 40px;
+  }
+  #atv-side,
+  html.atv-watch ytd-watch-flexy #below {
+    width: min(92vw, 440px) !important;
+    max-width: calc(100vw - 16px) !important;
+    right: 8px !important;
+    top: 66px !important;
+    bottom: 12px !important;
+  }
+  #atv-next {
+    width: min(340px, calc(100vw - 24px));
+    right: 12px;
+    bottom: 76px;
+  }
+}
