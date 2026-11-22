@@ -1,4 +1,4 @@
-name: Build Cinema YouTube APK
+name: Build Cinema YouTube Native Release APK
 
 on:
   push:
@@ -13,13 +13,13 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Locate or extract project
+      - name: Locate or extract native project
         id: locate
         run: |
-          if [ -f "CinemaYouTube-Android-v2.zip" ]; then
-            rm -rf extracted_v2
-            unzip -o "CinemaYouTube-Android-v2.zip" -d extracted_v2
-            FOUND=$(find ./extracted_v2 -maxdepth 4 -name 'settings.gradle.kts' | head -n 1)
+          if [ -f "CinemaYouTube-Native-v1.zip" ]; then
+            rm -rf extracted_native
+            unzip -o "CinemaYouTube-Native-v1.zip" -d extracted_native
+            FOUND=$(find ./extracted_native -maxdepth 4 -name 'settings.gradle.kts' | head -n 1)
           else
             FOUND=$(find . -maxdepth 4 -name 'settings.gradle.kts' | head -n 1)
           fi
@@ -37,13 +37,17 @@ jobs:
         with:
           gradle-version: '8.7'
 
-      - name: Build Debug APK
+      - name: Build Signed Release APK
         working-directory: ${{ steps.locate.outputs.dir }}
-        run: gradle assembleDebug --stacktrace
+        run: gradle assembleRelease --stacktrace
 
-      - name: Upload APK Artifact
+      - name: Prepare Release APK
+        working-directory: ${{ steps.locate.outputs.dir }}
+        run: cp app/build/outputs/apk/release/app-release.apk app/build/outputs/apk/release/CinemaYouTube-Release.apk
+
+      - name: Upload Signed Release APK
         uses: actions/upload-artifact@v4
         with:
-          name: Cinema-YouTube-v2-APK
-          path: ${{ steps.locate.outputs.dir }}/app/build/outputs/apk/debug/app-debug.apk
+          name: Cinema-YouTube-Native-Release-APK
+          path: ${{ steps.locate.outputs.dir }}/app/build/outputs/apk/release/CinemaYouTube-Release.apk
           if-no-files-found: error
